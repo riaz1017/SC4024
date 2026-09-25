@@ -1,0 +1,152 @@
+{
+  "source": "NASA Exoplanet Archive pscomppars",
+  "n_planets": 6366,
+  "n_hosts": 4775,
+  "year_min": 1992,
+  "year_max": 2026,
+  "n_with_distance": 6338,
+  "n_missing_distance": 28,
+  "n_within_2000_pc": 6007,
+  "n_beyond_2000_pc": 331,
+  "beyond_2000_pc_by_survey": {
+    "Microlensing": 265,
+    "Kepler": 59,
+    "Other transit": 6,
+    "K2": 1,
+    "TESS": 0,
+    "Radial Velocity": 0,
+    "Imaging": 0,
+    "Other": 0
+  },
+  "cumulative": {
+    "through_2009": 405,
+    "through_2014": 1783,
+    "through_2018": 3902
+  },
+  "years": {
+    "2009": {
+      "year": 2009,
+      "discoveries": 87,
+      "transits": 18,
+      "transit_share": 0.207,
+      "kepler_facility": 4
+    },
+    "2014": {
+      "year": 2014,
+      "discoveries": 872,
+      "transits": 810,
+      "transit_share": 0.929,
+      "kepler_facility": 784
+    },
+    "2016": {
+      "year": 2016,
+      "discoveries": 1504,
+      "transits": 1432,
+      "transit_share": 0.952,
+      "kepler_facility": 1276
+    }
+  },
+  "by_method": {
+    "Transit": {
+      "n": 4708,
+      "median_distance_pc": 474.86,
+      "median_radius_rearth": 2.46,
+      "median_period_days": 8.0
+    },
+    "Radial Velocity": {
+      "n": 1200,
+      "median_distance_pc": 44.09,
+      "median_radius_rearth": 12.6,
+      "median_period_days": 306.69
+    },
+    "Microlensing": {
+      "n": 289,
+      "median_distance_pc": 6260.0,
+      "median_radius_rearth": 12.5,
+      "median_period_days": 3142.5
+    },
+    "Imaging": {
+      "n": 97,
+      "median_distance_pc": 94.62,
+      "median_radius_rearth": 12.4,
+      "median_period_days": 33100.0
+    },
+    "Other": {
+      "n": 72,
+      "median_distance_pc": 396.33,
+      "median_radius_rearth": 12.35,
+      "median_period_days": 152.88
+    }
+  },
+  "by_survey": {
+    "Kepler": {
+      "n": 2787,
+      "with_distance": 2775,
+      "within_2000_pc": 2716,
+      "median_distance_pc": 767.7,
+      "median_offset_from_kepler_deg": 4.81,
+      "max_offset_from_kepler_deg": 7.93
+    },
+    "K2": {
+      "n": 549,
+      "with_distance": 549,
+      "within_2000_pc": 548,
+      "median_distance_pc": 206.61,
+      "median_offset_from_kepler_deg": 100.48,
+      "max_offset_from_kepler_deg": 123.54
+    },
+    "TESS": {
+      "n": 936,
+      "with_distance": 934,
+      "within_2000_pc": 934,
+      "median_distance_pc": 115.45,
+      "median_offset_from_kepler_deg": 99.98,
+      "max_offset_from_kepler_deg": 175.8
+    },
+    "Radial Velocity": {
+      "n": 1200,
+      "with_distance": 1198,
+      "within_2000_pc": 1198,
+      "median_distance_pc": 44.09,
+      "median_offset_from_kepler_deg": 95.12,
+      "max_offset_from_kepler_deg": 176.03
+    },
+    "Microlensing": {
+      "n": 288,
+      "with_distance": 286,
+      "within_2000_pc": 21,
+      "median_distance_pc": 6270.0,
+      "median_offset_from_kepler_deg": 76.19,
+      "max_offset_from_kepler_deg": 149.12
+    },
+    "Imaging": {
+      "n": 97,
+      "with_distance": 91,
+      "within_2000_pc": 91,
+      "median_distance_pc": 94.62,
+      "median_offset_from_kepler_deg": 99.28,
+      "max_offset_from_kepler_deg": 172.58
+    },
+    "Other transit": {
+      "n": 466,
+      "with_distance": 465,
+      "within_2000_pc": 459,
+      "median_distance_pc": 324.7,
+      "median_offset_from_kepler_deg": 93.57,
+      "max_offset_from_kepler_deg": 177.3
+    },
+    "Other": {
+      "n": 43,
+      "with_distance": 40,
+      "within_2000_pc": 40,
+      "median_distance_pc": 272.64,
+      "median_offset_from_kepler_deg": 68.09,
+      "max_offset_from_kepler_deg": 168.68
+    }
+  },
+  "kepler_field_center_deg": {
+    "ra": 290.6667,
+    "dec": 44.5
+  },
+  "near_limit_pc": 2000.0
+}
