@@ -342,7 +342,7 @@ def save_mass_period(df):
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.set_xlim(0.2, 1e5)
-    ax.set_title("Transit and radial velocity do not find the same planets", loc="left", fontsize=16, pad=12)
+    ax.set_title("Orbital period vs planet mass, by detection method", loc="left", fontsize=16, pad=12)
     ax.set_xlabel("Orbital period (days)", fontsize=13)
     ax.set_ylabel("Planet mass or M sin i (Earth masses)", fontsize=13)
     ax.tick_params(labelsize=11)
@@ -383,7 +383,7 @@ def save_mass_period(df):
     fig_w.add_hline(y=317.8, line_dash="dash", line_color="#666666", line_width=1)
     fig_w.update_layout(
         template="plotly_white",
-        title="Transit and radial velocity do not find the same planets",
+        title="Orbital period vs planet mass, by detection method",
         xaxis=dict(title="Orbital period (days)", type="log", range=[-0.7, 5]),
         yaxis=dict(title="Planet mass or M sin i (Earth masses)", type="log"),
         font=dict(size=16),
