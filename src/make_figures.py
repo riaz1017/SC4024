@@ -243,11 +243,177 @@ def save_cone(df):
     plt.close(fig_m)
 
 
+def sky_lon_deg(ra):
+    wrapped = np.where(ra > 180, ra - 360, ra)
+    return -wrapped
+
+
+def save_sky(df):
+    fig = plt.figure(figsize=(12.8, 7.0), dpi=140)
+    ax = fig.add_subplot(111, projection="mollweide")
+    for survey in SURVEY_ORDER:
+        rows = df[df["survey"] == survey]
+        if rows.empty:
+            continue
+        kepler = survey == "Kepler"
+        ax.scatter(
+            np.deg2rad(sky_lon_deg(rows["ra"].to_numpy())),
+            np.deg2rad(rows["dec"].to_numpy()),
+            s=11 if kepler else 7,
+            c=SURVEY_COLORS[survey],
+            label=survey,
+            alpha=0.85 if kepler else 0.55,
+            linewidths=0,
+            zorder=3 if kepler else 2,
+        )
+    ax.grid(True, color="#d5d5d5", linewidth=0.6)
+    ax.set_xticklabels(["10h", "8h", "6h", "4h", "2h", "0h", "22h", "20h", "18h", "16h", "14h"])
+    ax.tick_params(labelsize=10)
+    ax.set_title("Each survey covers a different patch of sky", loc="left", fontsize=16, pad=14)
+    ax.legend(frameon=False, fontsize=10, ncol=4, loc="lower center", bbox_to_anchor=(0.5, -0.14), markerscale=2)
+    fig.text(0.5, 0.012, "Right ascension runs right to left. Declination is marked in degrees.", ha="center", fontsize=11, color="#444444")
+    fig.subplots_adjust(left=0.05, right=0.98, top=0.90, bottom=0.20)
+    fig.savefig(FIG_DIR / "03_sky_by_survey.png")
+    plt.close(fig)
+
+    traces = []
+    for survey in SURVEY_ORDER:
+        rows = df[df["survey"] == survey]
+        traces.append(
+            go.Scattergeo(
+                lon=sky_lon_deg(rows["ra"].to_numpy()),
+                lat=rows["dec"],
+                mode="markers",
+                name=survey,
+                marker=dict(size=5 if survey == "Kepler" else 3.5, color=SURVEY_COLORS[survey], opacity=0.75),
+                customdata=np.stack(
+                    [rows["pl_name"], rows["disc_year"].astype(int), rows["ra"].round(1)],
+                    axis=1,
+                ),
+                hovertemplate=(
+                    "%{customdata[0]}<br>%{customdata[1]}"
+                    "<br>RA %{customdata[2]}°<br>Dec %{lat:.1f}°<extra>" + survey + "</extra>"
+                ),
+            )
+        )
+    fig_w = go.Figure(traces)
+    fig_w.update_layout(
+        title="Each survey covers a different patch of sky",
+        font=dict(size=16),
+        legend_title="Survey",
+        width=1200,
+        height=700,
+        margin=dict(l=20, r=20, t=70, b=20),
+        geo=dict(
+            projection_type="mollweide",
+            showland=False,
+            showocean=False,
+            showlakes=False,
+            showcoastlines=False,
+            showcountries=False,
+            showframe=True,
+            bgcolor="white",
+            lataxis=dict(showgrid=True, gridcolor="#dddddd", dtick=30),
+            lonaxis=dict(showgrid=True, gridcolor="#dddddd", dtick=30),
+        ),
+    )
+    fig_w.write_html(FIG_DIR / "03_sky_by_survey.html")
+
+
+def save_mass_period(df):
+    both = df[df["pl_bmasse"].gt(0) & df["pl_orbper"].gt(0)].copy()
+    draw_order = ["Transit", "Other", "Imaging", "Microlensing", "Radial Velocity"]
+
+    fig, ax = plt.subplots(figsize=(12.5, 7.0), dpi=140)
+    for method in draw_order:
+        rows = both[both["method"] == method]
+        ax.scatter(
+            rows["pl_orbper"],
+            rows["pl_bmasse"],
+            s=14,
+            c=METHOD_COLORS[method],
+            label=f"{method} ({len(rows)})",
+            alpha=0.35 if method == "Transit" else 0.75,
+            linewidths=0,
+            zorder=2 if method == "Transit" else 3,
+        )
+    ax.axhline(1, color="#666666", linewidth=0.8, linestyle="--", zorder=1)
+    ax.axhline(317.8, color="#666666", linewidth=0.8, linestyle="--", zorder=1)
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    ax.set_xlim(0.2, 1e5)
+    ax.set_title("Transit and radial velocity do not find the same planets", loc="left", fontsize=16, pad=12)
+    ax.set_xlabel("Orbital period (days)", fontsize=13)
+    ax.set_ylabel("Planet mass or M sin i (Earth masses)", fontsize=13)
+    ax.tick_params(labelsize=11)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.grid(True, which="both", color="#e6e6e6", linewidth=0.5)
+    ax.set_axisbelow(True)
+    ax.text(0.24, 1.15, "Earth", fontsize=10, color="#555555")
+    ax.text(0.24, 370, "Jupiter", fontsize=10, color="#555555")
+    ax.legend(frameon=False, fontsize=10, ncol=5, loc="upper center", bbox_to_anchor=(0.5, -0.16))
+    fig.text(
+        0.125,
+        0.01,
+        "Eight imaged planets with periods longer than 100,000 days sit beyond the right edge.",
+        fontsize=10,
+        color="#444444",
+    )
+    fig.subplots_adjust(left=0.10, right=0.98, top=0.90, bottom=0.20)
+    fig.savefig(FIG_DIR / "04_mass_vs_period.png")
+    plt.close(fig)
+
+    traces = []
+    for method in METHOD_ORDER:
+        rows = both[both["method"] == method]
+        traces.append(
+            go.Scattergl(
+                x=rows["pl_orbper"],
+                y=rows["pl_bmasse"],
+                mode="markers",
+                name=f"{method} ({len(rows)})",
+                marker=dict(size=6, color=METHOD_COLORS[method], opacity=0.45 if method == "Transit" else 0.75),
+                customdata=rows["pl_name"],
+                hovertemplate="%{customdata}<br>%{x:.2f} days<br>%{y:.2f} Earth masses<extra>" + method + "</extra>",
+            )
+        )
+    fig_w = go.Figure(traces)
+    fig_w.add_hline(y=1, line_dash="dash", line_color="#666666", line_width=1)
+    fig_w.add_hline(y=317.8, line_dash="dash", line_color="#666666", line_width=1)
+    fig_w.update_layout(
+        template="plotly_white",
+        title="Transit and radial velocity do not find the same planets",
+        xaxis=dict(title="Orbital period (days)", type="log", range=[-0.7, 5]),
+        yaxis=dict(title="Planet mass or M sin i (Earth masses)", type="log"),
+        font=dict(size=16),
+        legend_title="Discovery method",
+        width=1200,
+        height=760,
+        margin=dict(l=80, r=30, t=70, b=90),
+        annotations=[
+            dict(
+                text="Eight imaged planets with periods longer than 100,000 days sit beyond the right edge.",
+                xref="paper",
+                yref="paper",
+                x=0,
+                y=-0.18,
+                showarrow=False,
+                font=dict(size=13, color="#444444"),
+                xanchor="left",
+            )
+        ],
+    )
+    fig_w.write_html(FIG_DIR / "04_mass_vs_period.html")
+
+
 def main():
     FIG_DIR.mkdir(parents=True, exist_ok=True)
     df = load()
     save_timeline(df)
     save_cone(df)
+    save_sky(df)
+    save_mass_period(df)
     print(f"figures written to {FIG_DIR}")
 
 
